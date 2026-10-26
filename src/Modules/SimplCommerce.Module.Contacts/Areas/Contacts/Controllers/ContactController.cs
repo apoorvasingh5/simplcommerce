@@ -73,6 +73,26 @@ namespace SimplCommerce.Module.Contacts.Areas.Contacts.Controllers
             return View("Index", model);
         }
 
+        [HttpGet("contact/status/{id}")]
+        public IActionResult Status(long id)
+        {
+            var contact = _contactRepository.Query().FirstOrDefault(x => x.Id == id && !x.IsDeleted);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            return Json(new
+            {
+                contact.Id,
+                contact.FullName,
+                contact.EmailAddress,
+                contact.PhoneNumber,
+                contact.Content,
+                contact.CreatedOn
+            });
+        }
+
         private IList<ContactAreaVm> GetContactArea()
         {
             var getContactAreaName = _contentLocalizationService.GetLocalizationFunction<ContactArea>();

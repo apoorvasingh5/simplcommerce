@@ -1,0 +1,39 @@
+name: Security baseline
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  security-baseline:
+    uses: cx-kedar-bhujade/prbot/.github/workflows/security-baseline.yml@checkmarx-one-on-threatmodel-v2
+    permissions:
+      contents: read
+      id-token: write
+      actions: write
+    with:
+      bot-repository: cx-kedar-bhujade/prbot
+      bot-ref: checkmarx-one-on-threatmodel-v2
+      aws-region: us-east-1         # must match your Bedrock API key / IAM role region
+      # provider: auto              # auto | anthropic | bedrock | vertex | openai | gemini
+      # model-researcher: opus      # optional per-role override (architect, modeler, researcher, verifier, repair)
+    secrets:
+      # Provide credentials for ONE provider (prbot auto-detects it; or set `provider:` under `with:`).
+      # Amazon Bedrock: EITHER a Bedrock API key OR an IAM OIDC role ARN
+      AWS_BEARER_TOKEN_BEDROCK: ${{ secrets.AWS_BEARER_TOKEN_BEDROCK }}
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      # Anthropic API:
+      # ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Google Vertex AI (also set `vertex-project-id:` under `with:`):
+      # GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      # GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      # OpenAI (Codex CLI):
+      # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Google Gemini (Gemini CLI, Google AI Studio key):
+      # GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      # Optional: only needed if cx-kedar-bhujade/prbot is private
+      # APP_ID: ${{ secrets.APP_ID }}
+      # APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
